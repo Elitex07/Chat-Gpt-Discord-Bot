@@ -23,8 +23,13 @@ node index.js
 - You are done.
 
 ## Configuration
-- To Add/Change chat channel, head to `Line 60: index.js`.
-- Change the Channel ID
+To get Custom Response, just head to `prompt` variable, and change things accordingly. Do not add so many information, otherwise you will exhaust your free credits quickly.
+
+![image](https://user-images.githubusercontent.com/92834724/224532025-f86a3de2-3d03-4fdc-ba91-d72a98630043.png)
+
+## Troubleshooting
+- Error: Status Code 500 : This means there is an server error from OpenAi
+- Error: Status Code 429 : You have been ratelimited from OpenAi
 
 ## Support
 Join our Discord Servers, to get support:
