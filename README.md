@@ -3,7 +3,7 @@ This is an example Discord Chat Bot based on Open Ai and Discord.js Library. Enj
 
 ## Requirements
 - A Discord Bot with its Token.
-- Open Ai API Key [Get Key from here](https://beta.openai.com)
+- Open Ai API Key [Get Key from here](https://platform.openai.com)
 
 ## Startup
 - Create a file named `.env`.
