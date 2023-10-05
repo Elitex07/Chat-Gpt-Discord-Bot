@@ -1,6 +1,7 @@
-const {Client, Collection, GatewayIntentBits, Partials, EmbedBuilder, PermissionsBitField} = require('discord.js');
+const { Client, GatewayIntentBits, PermissionsBitField } = require('discord.js');
 require('dotenv').config();
 const collection = new Map();
+const config = require('./config.json');
 require('colors');
 
 // Initialzing Client
@@ -43,30 +44,25 @@ const configuration = new Configuration({
 });
 
 let prompt = [
-    {"role": "system", "content": "You are Raiden, a Discord bot made by a person named Elitex. Answer as concisely as possible."},
-    {"role": "user", "content": "Who are you?"},
-    {"role": "assistant", "content": "Hey, I am Raiden. A discord bot, created by Elitex, he is cool programmer. I was made on 21 Novemeber, 2021. I can perform various task involving Auto Moderation and Utitics. My Support Server and Community Server Link is: https://discord.gg/raidenbot . My website link is: https://raidenbot.xyz"},
-    {"role": "user", "content":"Who is Elitex?"},
-    {"role": "assistant", "content":"Elitex is a my developer. He solely developes my each and every feature. He has some public repo's at https://github.com/Elitex07. He works alone on me, he has team of bug testers to test or confirm Bugs."},
-    {"role": "user", "content":"Who all you know?"},
-    {"role": "assistant", "content": "My Support Server name is Raiden Community. Grezaski is Co Owner and Manager of Raiden Community. Ashen, LEO and Zayn are the Admins of Raiden Community. AlexDev is Owner of a project namely Rover Development. They are not developers of Raiden, developer is only one person Elitex."}
-];
+    {"role": "system", "content": `You are RaidenAI, created by Elitex (a minded individual) on 21 Novemeber, 2021. Raiden is an Utility Discord Bot which has Chatbot feature. You have to chat casually. Do not give information on adult topics. Always Format text using markdown: **bold**, [title](url) for hyperlinks, # Heading 1, ## Heading 2 and ### Heading 3 to write headings.`},
+];// You can modify prompt for customized responses.
 
 client.on('messageCreate', async message => {
     if(message.author.bot) return;
     if(!message.guild) return;
     if(!message.guild.available) await message.guild.fetch().catch(e => null);
     
-    if(!['ch-id1','ch-id2'].includes(message.channel.id)) return;
+    if(!config.channels.includes(message.channel.id)) return;
+
     try{
         collection.forEach((value, key) => {
             let l = value[value.length - 1];
-	    if(!l || !l[0]) collection.delete(key);
+	        if(!l || !Array.isArray(l) || !l[0]) return collection.delete(key);
             if(Date.now() - l[0] >= 60*1000) collection.delete(key)
         });
 
         if(!message.channel.permissionsFor(client.user.id).has(PermissionsBitField.Flags.SendMessages)) return;
-        if(message.type != 0 || ![0 , 5, 10, 11, 12].includes(message.channel.type)) return; //Ignores Replies
+        if(message.type != 0 || ![0 , 5, 10, 11, 12].includes(message.channel.type)) return; // Ignores Replies
 
         message.channel.sendTyping().catch(e => {null}); //Bot is typing..
 
@@ -79,19 +75,22 @@ client.on('messageCreate', async message => {
 	    userm = userm.filter(d => d && d[0]);
         userm = userm.filter(d => 60*1000 - (Date.now() - d[0]) >= 0);
 
-        // Intoduce the user
+        // Introduce the user (remove this if you want)
         let prev = [
             {'role':'user', 'content':`Hi! My name is ${message.member.displayName}`},
             {'role':'assistant', 'content': `Nice to meet you ${message.member.displayName}!`}
         ];
-        await userm.forEach(async d => { //`${message.member.displayName}: ${d[1]}\n\`;
-            let userline = [d[1]]; //Array Element
+        // -------
+
+        // Loading previous conversations
+        await userm.forEach(async d => {
+            let userline = [d[1]];
             let botline = userline.concat([d[2]]);
             prev = prev.concat(botline);
         });
 
         let b = prompt.concat(prev).concat([{"role":"user", "content": message.cleanContent}]);
-        //console.log(b)
+        // console.log(b); // for debugging.
 
         const configuration = new Configuration({
             apiKey: process.env.OPENAI_API_KEY,
